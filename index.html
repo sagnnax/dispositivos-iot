@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Control de Bomba de Agua</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/4.2.7/mqtt.min.js"></script>
+  <script src="scripts.js"></script>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;400&display=swap" rel="stylesheet">
+</head>
+<body>
+  <center>
+<MARQUEE BEHAVIOR=alternate>
+  <h1>Control de Bomba de Agua</h1>
+</MARQUEE>
+    <img src="images/rotoplas.gif">
+    <br>
+    <button class="btn" onclick="encenderBomba()">Encender Bomba</button>
+    <button class="btn" onclick="apagarBomba()">Apagar Bomba</button>
+    <button class="btn" onclick="realizarConsumo()">Realizar Consumo de Agua</button><br><br>
+    <button class="btn" onclick="detenerConsumo()">Detener Consumo</button>
+    <button class="btn" onclick="realizarLlenado()">Realizar llenado de Agua</button>
+    <button class="btn" onclick="detenerLlenado()">detener llenado de Agua</button><br><br>
+    <button class="btn" onclick="verificarNivelAgua()">Verificar Nivel de Agua</button>
+  </center>
+</body>
+</html>
