@@ -1,6 +1,7 @@
 // Crear instancia del cliente MQTT
 const client = mqtt.connect('ws://localhost:8083/mqtt');
 let consumoInterval;
+let llenadoInterval;
 // Evento cuando el cliente MQTT se conecta
 client.on('connect', () => {
   console.log('Conectado al broker MQTT');
@@ -59,13 +60,14 @@ function realizarConsumo() {
       //  encenderBomba();
 
     }
-    //vrificar si enciende bomba 
+    //limite maximo donde se deja de consumir agua
     if (consumo <= 50) {
       console.log('Nivel crítico de agua encienda la bomba');
       // Encender la bomba
       client.publish('iot/cisterna/consumo', "encienda la bomba");
       encenderBomba();
       detenerConsumo();
+      realizarLlenado();
 
     }
     // Verificar si se llegó al mínimo de consumo
@@ -92,3 +94,27 @@ function verificarNivelAgua() {
   console.log('Nivel Actual: ', nivelActual);
   client.publish('iot/cisterna/nivel', 'En la cisterna hay: ' + nivelActual + ' Litros');
 }
+// Función para realizar el llenado de agua
+function realizarLlenado() {
+  console.log('Iniciando llenado de agua');
+  let llenado = 50;
+  // Incremento del número de 5 en 5
+  llenadoInterval = setInterval(() => {
+    llenado += 50;
+    console.log('Llenado:', llenado);
+    // Verificar si se alcanzó el máximo de llenado
+    if (llenado >= 1000) {
+      console.log('Llenado completo');
+      // Detener el llenado
+      detenerLlenado();
+    }
+    client.publish('iot/cisterna/consumo', llenado.toString());
+  }, 1000);
+}
+// Función para detener el llenado de agua
+function detenerLlenado() {
+  console.log('Llenado detenido');
+  clearInterval(llenadoInterval);
+  apagarBomba();
+}
+
