@@ -3,6 +3,7 @@ const client = mqtt.connect('ws://localhost:8083/mqtt');
 let consumoInterval;
 let llenadoInterval;
 let bombaEncendida;
+let consumo = 1000;
 
 // Evento cuando el cliente MQTT se conecta
 client.on('connect', () => {
@@ -30,35 +31,35 @@ client.on('message', (topic, message) => {
   }
 });
 function encenderBomba() {
-    if (bombaEncendida) {
-      console.log('La bomba de agua ya está encendida.');
-      return;
-    }
-  
-    console.log('Encendiendo la bomba de agua');
-     // Publicar un mensaje para encender la bomba
+  if (bombaEncendida) {
+    console.log('La bomba de agua ya está encendida.');
+    return;
+  }
+
+  console.log('Encendiendo la bomba de agua');
+  // Publicar un mensaje para encender la bomba
   client.publish('iot/bomba/control', 'encender');
-    bombaEncendida = true;
-    
+  bombaEncendida = true;
+
+}
+
+// Función para apagar la bomba de agua
+function apagarBomba() {
+  if (!bombaEncendida) {
+    console.log('La bomba de agua ya está apagada.');
+    return;
   }
-  
-  // Función para apagar la bomba de agua
-  function apagarBomba() {
-    if (!bombaEncendida) {
-      console.log('La bomba de agua ya está apagada.');
-      return;
-    }
-  
-    console.log('Apagando la bomba de agua');
-    client.publish('iot/bomba/control', 'apagar');
-    bombaEncendida = false;
-    
-  }
+
+  console.log('Apagando la bomba de agua');
+  client.publish('iot/bomba/control', 'apagar');
+  bombaEncendida = false;
+
+}
 
 
 function realizarConsumo() {
   console.log('Iniciando consumo de agua');
-  let consumo = 1000;
+
   // Decremento del número de 5 en 5
   consumoInterval = setInterval(() => {
     consumo -= 50;
@@ -112,21 +113,20 @@ function realizarLlenado() {
     console.log('La bomba de agua está apagada. No se puede realizar el llenado.');
     return;
   }
-  
+
   detenerConsumo();
   console.log('Iniciando llenado de agua');
-  let llenado = 50;
   // Incremento del número de 5 en 5
   llenadoInterval = setInterval(() => {
-    llenado += 50;
-    console.log('Llenado:', llenado);
+    consumo += 50;
+    console.log('Llenado:', consumo);
     // Verificar si se alcanzó el máximo de llenado
-    if (llenado >= 1000) {
+    if (consumo >= 1000) {
       console.log('Llenado completo');
       // Detener el llenado
       detenerLlenado();
     }
-    client.publish('iot/cisterna/consumo', llenado.toString());
+    client.publish('iot/cisterna/consumo', consumo.toString());
   }, 1000);
 }
 // Función para detener el llenado de agua
