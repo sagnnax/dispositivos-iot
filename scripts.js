@@ -2,6 +2,8 @@
 const client = mqtt.connect('ws://localhost:8083/mqtt');
 let consumoInterval;
 let llenadoInterval;
+let bombaEncendida;
+
 // Evento cuando el cliente MQTT se conecta
 client.on('connect', () => {
   console.log('Conectado al broker MQTT');
@@ -27,22 +29,32 @@ client.on('message', (topic, message) => {
     // Aquí puedes agregar tu lógica para mostrar el nivel de agua en la interfaz gráfica
   }
 });
-
-// Función para encender la bomba
 function encenderBomba() {
-  console.log('Bomba de agua encendida');
-
-  // Publicar un mensaje para encender la bomba
+    if (bombaEncendida) {
+      console.log('La bomba de agua ya está encendida.');
+      return;
+    }
+  
+    console.log('Encendiendo la bomba de agua');
+     // Publicar un mensaje para encender la bomba
   client.publish('iot/bomba/control', 'encender');
-}
+    bombaEncendida = true;
+    
+  }
+  
+  // Función para apagar la bomba de agua
+  function apagarBomba() {
+    if (!bombaEncendida) {
+      console.log('La bomba de agua ya está apagada.');
+      return;
+    }
+  
+    console.log('Apagando la bomba de agua');
+    client.publish('iot/bomba/control', 'apagar');
+    bombaEncendida = false;
+    
+  }
 
-// Función para apagar la bomba
-function apagarBomba() {
-  console.log('Bomba de agua apagada');
-
-  // Publicar un mensaje para apagar la bomba
-  client.publish('iot/bomba/control', 'apagar');
-}
 
 function realizarConsumo() {
   console.log('Iniciando consumo de agua');
@@ -96,6 +108,12 @@ function verificarNivelAgua() {
 }
 // Función para realizar el llenado de agua
 function realizarLlenado() {
+  if (!bombaEncendida) {
+    console.log('La bomba de agua está apagada. No se puede realizar el llenado.');
+    return;
+  }
+  
+  detenerConsumo();
   console.log('Iniciando llenado de agua');
   let llenado = 50;
   // Incremento del número de 5 en 5

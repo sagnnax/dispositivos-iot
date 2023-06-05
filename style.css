@@ -1,4 +1,22 @@
 body {
     background: rgb(151, 149, 192);
-    background: linear-gradient(225deg, rgb(135 222 220) 0%, rgb(239 239 239) 35%, rgb(76 138 206) 100%)
+}
+
+button {
+    background-color: rgb(34, 151, 189);
+    border: none;
+    border-radius: 3px;
+    padding: 4px 8px;
+}
+
+button:disabled {
+    cursor: not-allowed;
+}
+
+button:enabled {
+    cursor: pointer;
+}
+
+h1 {
+    
 }
