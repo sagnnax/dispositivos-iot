@@ -22,7 +22,7 @@ client.on('message', (topic, message) => {
   // Actualizar el nivel de agua en la cisterna
   if (topic === 'iot/cisterna/nivel') {
     const nivelAgua = parseInt(message.toString());
-    console.log('Nivel de agua en la cisterna:', nivelAgua);
+    console.log('Nivel de agua en la cisterna:', nivelActual);
     // Aquí puedes agregar tu lógica para mostrar el nivel de agua en la interfaz gráfica
   }
 });
@@ -44,49 +44,51 @@ function apagarBomba() {
 }
 
 function realizarConsumo() {
-    console.log('Iniciando consumo de agua');
-    let consumo = 1000;
-    // Decremento del número de 5 en 5
-    consumoInterval = setInterval(() => {
-      consumo -= 50;
-      console.log('Consumo:', consumo);
-      
-      // Verificar si se alcanzó el nivel crítico de agua
-      if (consumo <= 500) {
-        console.log('Nivel peligro de agua encienda la bomba');
-        // Encender la bomba
-        client.publish('iot/cisterna/consumo', "encienda la bomba");
-      //  encenderBomba();
-        
-      }
-      //vrificar si enciende bomba 
-      if (consumo <= 50) {
-        console.log('Nivel crítico de agua encienda la bomba');
-        // Encender la bomba
-        client.publish('iot/cisterna/consumo', "encienda la bomba");
-       encenderBomba();
-       detenerConsumo();
-        
-      }
-      // Verificar si se llegó al mínimo de consumo
-      if (consumo <= 5) {
-        console.log('Consumo finalizado');
-        // Detener el consumo
-        detenerConsumo();
-      }
-      client.publish('iot/cisterna/consumo', consumo.toString());
-    }, 1000);
-  }
-  // Función para detener el consumo de agua
-  function detenerConsumo() {
-    console.log('Consumo detenido');
-    clearInterval(consumoInterval);
-    client.publish('iot/cisterna/consumo', "se detuvo el consumo");
+  console.log('Iniciando consumo de agua');
+  let consumo = 1000;
+  // Decremento del número de 5 en 5
+  consumoInterval = setInterval(() => {
+    consumo -= 50;
+    console.log('Consumo:', consumo);
 
-  } 
+    // Verificar si se alcanzó el nivel crítico de agua
+    if (consumo <= 500) {
+      console.log('Nivel peligro de agua encienda la bomba');
+      // Encender la bomba
+      client.publish('iot/cisterna/consumo', "encienda la bomba");
+      //  encenderBomba();
+
+    }
+    //vrificar si enciende bomba 
+    if (consumo <= 50) {
+      console.log('Nivel crítico de agua encienda la bomba');
+      // Encender la bomba
+      client.publish('iot/cisterna/consumo', "encienda la bomba");
+      encenderBomba();
+      detenerConsumo();
+
+    }
+    // Verificar si se llegó al mínimo de consumo
+    if (consumo <= 5) {
+      console.log('Consumo finalizado');
+      // Detener el consumo
+      detenerConsumo();
+    }
+    client.publish('iot/cisterna/consumo', consumo.toString());
+  }, 1000);
+}
+// Función para detener el consumo de agua
+function detenerConsumo() {
+  console.log('Consumo detenido');
+  clearInterval(consumoInterval);
+  client.publish('iot/cisterna/consumo', "se detuvo el consumo");
+
+}
 function verificarNivelAgua() {
   console.log('Verificando nivel de agua');
+  nivelActual = parseInt((Math.random() * (1000 - 0) + 0));
 
   // Publicar un mensaje para solicitar el nivel de agua en la cisterna
-  client.publish('iot/cisterna/nivel', 'solicitar');
+  console.log('Nivel Actual: ', nivelActual);
+  client.publish('iot/cisterna/nivel', 'En la cisterna hay: ' + nivelActual + ' Litros');
 }
